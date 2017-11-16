@@ -6,6 +6,14 @@ import psycopg2
 
 DBNAME = "news"
 
+def querydb(query):
+    """Handle all db queries"""
+    db = psycopg2.connect(database=DBNAME)
+    c = db.cursor()
+    c.execute(query)
+    return c.fetchall()
+    db.close()
+
 def get_top_articles():
   """Return the top 3 most view articles."""
 
@@ -15,17 +23,13 @@ def get_top_articles():
         select path, count (*) as views
         from log
         where path like '%article%'
-        group by path
-        order by views desc
-        limit 3) as topthree, articles
+        group by path) as topthree, articles
         where topthree.path like '%' || articles.slug || '%'
+        order by views desc
+        limit 3
   """
 
-  db = psycopg2.connect(database=DBNAME)
-  c = db.cursor()
-  c.execute(query)
-  return c.fetchall()
-  db.close()
+  return querydb(query)
 
 def get_popular_authors():
   """Return all authors in order of popularity."""
@@ -42,13 +46,7 @@ def get_popular_authors():
         order by author_views desc
   """
 
-  db = psycopg2.connect(database=DBNAME)
-  c = db.cursor()
-  c.execute(query)
-  return c.fetchall()
-  db.close()
-
-
+  return querydb(query)
 
 dboutput = get_popular_authors()
 # get_top_articles()

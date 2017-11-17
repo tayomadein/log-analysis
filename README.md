@@ -55,8 +55,7 @@ While connected to your database, run log analysis using
 
 ```
 python log.py
-```
-The output will appear 
+``` 
 
 **Notes:**
-* 
+* The output will appear in output.txt

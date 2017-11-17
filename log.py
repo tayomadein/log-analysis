@@ -56,7 +56,7 @@ def get_error_rate():
     """Return days were more than 1% of requests lead to errors."""
 
     query = """
-        select output.date, output.error, output.total,
+        select output.date,
             round((output.error*100.00/output.total), 1) as perc
         from (
             select response.date, errortable.error, response.total
@@ -96,9 +96,9 @@ def print_output():
         f.write(entry)
 
     dboutput = get_error_rate()
-    f.write("\n\n3. More than 1percent of requests lead to errors on:\n")
+    f.write("\n\n3. More than 1% of requests led to errors on:\n")
     for row in dboutput:
-        entry = row[0] + ' - ' + str(row[1]) + " views\n"
+        entry = row[0] + ' - ' + str(row[1]) + "% requests\n"
         f.write(entry)
 
     f.close()

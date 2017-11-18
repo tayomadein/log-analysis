@@ -14,4 +14,4 @@ Markoff Chaney - 84557 views
 
 
 3. More than 1% of requests led to errors on:
-2016-07-17 - 2.3% requests
+July 17, 2016 - 2.3% requests

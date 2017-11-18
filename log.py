@@ -38,15 +38,14 @@ def get_popular_authors():
     """Return all authors in order of popularity."""
 
     query = """
-        select name, sum(views) as author_views
+        select name, allviews.views as author_views
         from (
-            select title, author, count (articles.title) as views
+            select author, count (articles.title) as views
             from log, articles
-            where log.path like '%' || articles.slug || '%'
-            group by title, author) as allviews, authors
-            where allviews.author = authors.id
-            group by name
-            order by author_views desc
+            where log.path like concat('/article/%', articles.slug)
+            group by author) as allviews, authors
+        where allviews.author = authors.id
+        order by author_views desc
     """
 
     return querydb(query)
@@ -78,7 +77,7 @@ def get_error_rate():
 def print_output():
     """Print Query results to a text file"""
 
-    print "Getting Log Analysis"
+    print ("Getting Log Analysis")
 
     f = open("output.txt", "w")
     f.write("Logs Analysis:\n")

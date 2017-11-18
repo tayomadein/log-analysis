@@ -78,7 +78,7 @@ def get_error_rate():
 def print_output():
     """Print Query results to a text file"""
 
-    print "Getting Log Analysis"
+    print ("Getting Log Analysis")
 
     f = open("output.txt", "w")
     f.write("Logs Analysis:\n")

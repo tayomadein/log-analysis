@@ -44,14 +44,7 @@ psql -d news -f newsdata.sql
 
 * Step 4:
 
-Connect to your database using 
-```
-psql -d news
-```
-
-* Step 5:
-
-While connected to your database, run log analysis using
+Run log analysis using
 
 ```
 python log.py

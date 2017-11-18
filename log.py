@@ -12,8 +12,9 @@ def querydb(query):
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
     c.execute(query)
-    return c.fetchall()
+    results = c.fetchall()
     db.close()
+    return results
 
 
 def get_top_articles():
@@ -25,10 +26,11 @@ def get_top_articles():
             select path, count (*) as views
             from log
             where path like '%article%'
+            and log.status like '%OK%'
             group by path) as topthree, articles
-            where topthree.path like '%' || articles.slug || '%'
-            order by views desc
-            limit 3
+        where topthree.path like '%' || articles.slug || '%'
+        order by views desc
+        limit 3
     """
 
     return querydb(query)
@@ -56,21 +58,21 @@ def get_error_rate():
     """Return days were more than 1% of requests lead to errors."""
 
     query = """
-        select output.date,
+        select to_char(output.date, 'FMMonth FMDD, YYYY'),
             round((output.error*100.00/output.total), 1) as perc
         from (
             select response.date, errortable.error, response.total
             from (
-                select to_char(time, 'YYYY-MM-DD') as date, count (*) as error
+                select date(time) as date, count (*) as error
                 from log
                 where status not like '%OK%'
                 group by date) as errortable,
-                (select to_char(time, 'YYYY-MM-DD') as date, count (*) as total
+                (select date(time) as date, count (*) as total
                 from log
                 group by date) as response
             where errortable.date = response.date
             group by response.date, errortable.error, response.total) as output
-        where (output.error*100.00/output.total) > 1.0;
+        where (output.error*100.00/output.total) > 1.0
     """
     return querydb(query)
 

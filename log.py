@@ -52,9 +52,9 @@ def get_popular_authors():
     """Return all authors in order of popularity."""
 
     query = """
-        select name, allviews.views as author_views
+        select name, sum(views) as author_views
         from (
-            select author, count (articles.title) as views
+            select title, author, count (articles.title) as views
             from log, articles
             where log.path = concat('/article/', articles.slug)
             group by author) as allviews, authors
@@ -91,7 +91,7 @@ def get_error_rate():
 def print_output():
     """Print Query results to a text file"""
 
-    print ("Getting Log Analysis")
+    print "Getting Log Analysis"
 
     f = open("output.txt", "w")
     f.write("Logs Analysis:\n")

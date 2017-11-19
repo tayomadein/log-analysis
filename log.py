@@ -8,13 +8,25 @@ DBNAME = "news"
 
 
 def querydb(query):
-    """Handle all db queries"""
-    db = psycopg2.connect(database=DBNAME)
-    c = db.cursor()
-    c.execute(query)
-    results = c.fetchall()
-    db.close()
-    return results
+    """
+    querydb() takes an SQL query as a parameter, 
+    executes the query and returns the results as a list of tuples.
+    args:
+       query - (string) an SQL query statement to be executed.
+
+    returns:
+       A list of tuples containing the results of the query.
+    """
+
+    try:
+        db = psycopg2.connect(database=DBNAME)
+        c = db.cursor()
+        c.execute(query)
+        results = c.fetchall()
+        db.close()
+        return results
+    except psycopg2.Error as e:
+        print ("Database error occured\n", e)
 
 
 def get_top_articles():
@@ -28,7 +40,7 @@ def get_top_articles():
             where path like '%article%'
             and log.status like '%OK%'
             group by path) as topthree, articles
-        where topthree.path like '%' || articles.slug || '%'
+        where topthree.path = '/article/' || articles.slug
         order by views desc
         limit 3
     """
@@ -44,11 +56,10 @@ def get_popular_authors():
         from (
             select title, author, count (articles.title) as views
             from log, articles
-            where log.path like '%' || articles.slug || '%'
-            group by title, author) as allviews, authors
-            where allviews.author = authors.id
-            group by name
-            order by author_views desc
+            where log.path = concat('/article/', articles.slug)
+            group by author) as allviews, authors
+        where allviews.author = authors.id
+        order by author_views desc
     """
 
     return querydb(query)
@@ -87,22 +98,23 @@ def print_output():
 
     dboutput = get_top_articles()
     f.write("\n1. Most Popular Articles:\n")
-    for row in dboutput:
-        entry = row[0] + ' - ' + str(row[1]) + " views\n"
+    for title, views in dboutput:
+        entry = '{} - {} views\n'.format(title, views)
         f.write(entry)
 
     dboutput = get_popular_authors()
     f.write("\n\n2. Most Popular Authors:\n")
-    for row in dboutput:
-        entry = row[0] + ' - ' + str(row[1]) + " views\n"
+    for title, views in dboutput:
+        entry = '{} - {} views\n'.format(title, views)
         f.write(entry)
 
     dboutput = get_error_rate()
     f.write("\n\n3. More than 1% of requests led to errors on:\n")
-    for row in dboutput:
-        entry = row[0] + ' - ' + str(row[1]) + "% requests\n"
+    for date, perc in dboutput:
+        entry = '{} - {}% requests\n'.format(date, perc)
         f.write(entry)
 
     f.close()
 
-print_output()
+if __name__ == '__main__':
+    print_output()

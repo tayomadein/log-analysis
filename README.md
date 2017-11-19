@@ -3,7 +3,7 @@
 
 ## Description
 
-This is a project for [Udacity Full Stack Web Developer Nanodegree](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd004). The Logs Analysis project focuses on testing and improving my skills in Database Management using PostgreSQL + Python. It answers the following questions: 
+This is a project for [Udacity Full Stack Web Developer Nanodegree](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd004). The Logs Analysis project focuses on testing and improving my skills in Database Management using PostgreSQL + Python. Here, a mock PostgreSQL database for a fictional news website is set up, and the provided Python script `log.py` uses the psycopg2 library to query the database and produce a report that answers the following questions: 
 
 1. What are the most popular three articles of all time?
 2. Who are the most popular article authors of all time?
@@ -15,6 +15,10 @@ This project consists for the following files:
 
 * log.py - Main Script to manage queries and generate content of output.txt
 * output.txt - Contains the output of running the queries in log.py
+
+## Requirements
+* Vagrant
+* VirtualBox
 
 ## How to run
 
@@ -47,7 +51,7 @@ psql -d news -f newsdata.sql
 Run log analysis using
 
 ```
-python log.py
+python3 log.py
 ``` 
 
 **Notes:**
